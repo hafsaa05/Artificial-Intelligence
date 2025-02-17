@@ -26,10 +26,8 @@ def run_agent(agent, environment):
     print(f"Percept: {percept}, Action: {action}")
 
 
-# Define temperature and create objects
-temp = 120  # Example temperature
+temp = 120 
 agent = SimpleReflexAgent()
 environment = Environment(temp)
 
-# Run the agent
 run_agent(agent, environment)
