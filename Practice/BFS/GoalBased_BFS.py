@@ -15,6 +15,7 @@ P O O X O
 X X O O O
 O O O X O
 '''
+
 class GoalBasedAgent:
     def __init__(self, goal):
         self.goal = goal
@@ -34,48 +35,35 @@ class GoalBasedAgent:
 class Environment:
     def __init__(self, grid):
         self.grid = grid
-        self.graph = self.create_graph()
-
-    def create_graph(self):
-        rows, cols = len(self.grid), len(self.grid[0])
-        graph = {}
-        
-        # Directions for movement: Up, Down, Left, Right
-        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
-
-        for i in range(rows):
-            for j in range(cols):
-                if self.grid[i][j] != 'X':  # Only consider traversable cells
-                    neighbors = []
-                    for dx, dy in directions:
-                        nx, ny = i + dx, j + dy
-                        if 0 <= nx < rows and 0 <= ny < cols and self.grid[nx][ny] != 'X':
-                            neighbors.append((nx, ny))
-                    graph[(i, j)] = neighbors
-
-        return graph
+        self.rows = len(grid)
+        self.cols = len(grid[0])
 
     def get_percept(self, node):
         return node
 
+    # BFS Search Implementation
     def bfs_search(self, start, goal):
-        visited = []  # Track visited nodes
-        queue = []    # Queue for BFS
-        visited.append(start)
-        queue.append(start)
+        visited = []
+        queue = [(start, [start])]  # Queue holds (node, path)
+
+        # Directions for movement: Up, Down, Left, Right
+        directions = [(-1, 0), (1, 0), (0, -1), (0, 1)]
 
         while queue:
-            node = queue.pop(0)  # Dequeue the first element (FIFO)
-            print(f"Visiting: {node}")
+            node, path = queue.pop(0)  # FIFO Queue
+            x, y = node
 
-            if node == goal:
-                return f"Goal {goal} found!"
+            if node == goal:  # ✅ Correct Goal Check
+                return f"Goal found! Path: {path}"
 
-            for neighbour in self.graph.get(node, []):
-                if neighbour not in visited:
-                    visited.append(neighbour)
-                    queue.append(neighbour)
-        
+            if node not in visited:
+                visited.append(node)
+                for dx, dy in directions:
+                    nx, ny = x + dx, y + dy
+                    if 0 <= nx < self.rows and 0 <= ny < self.cols:
+                        if self.grid[nx][ny] != 'X' and (nx, ny) not in visited:
+                            queue.append(((nx, ny), path + [(nx, ny)]))
+
         return "Goal not found"
 
 def run_agent(agent, environment, start_node):
@@ -86,7 +74,7 @@ def run_agent(agent, environment, start_node):
 # Grid Layout
 grid = [
     ['O', 'O', 'X', 'O', 'T'],
-    ['O', 'X', 'X', 'O', 'X'],
+    ['O', 'X', 'O', 'O', 'X'],
     ['P', 'O', 'O', 'X', 'O'],
     ['X', 'X', 'O', 'O', 'O'],
     ['O', 'O', 'O', 'X', 'O'],
