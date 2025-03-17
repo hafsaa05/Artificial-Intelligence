@@ -50,6 +50,10 @@ def select_parents(population, fitness_scores):
         selected_parents.append(winner[0])  # Append only the individual's binary string
     return selected_parents
 
+    # 2nd method
+    # sorted_population = [x for _, x in sorted(zip(fitness_scores, population))]
+    # return sorted_population[:len(population) // 2]
+
 # Step 6: Crossover (Uniform Crossover)
 def crossover(parent1, parent2):
     child = []
