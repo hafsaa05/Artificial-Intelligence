@@ -1,0 +1,11 @@
+email_id,subject,body,spam,sender,domain
+1,"Free money now!","Congratulations, you've won a free gift card!",1,"info@example.com","example.com"
+2,"Meeting at 3PM","Let's meet at 3PM to discuss the project updates.",0,"john.doe@company.com","company.com"
+3,"Buy now and save 50%","Limited time offer: Buy now and get 50% off!",1,"sales@offer.com","offer.com"
+4,"Team lunch tomorrow","The team is organizing a lunch tomorrow. See you there!",0,"manager@workplace.com","workplace.com"
+5,"Important update on your account","Your account has been updated. Please log in to verify.",0,"support@bank.com","bank.com"
+6,"You've been selected for a prize!","Hurry up and claim your $500 gift card.",1,"prizes@scam.com","scam.com"
+7,"New project updates","We have new updates for the project that need to be discussed.",0,"team@company.com","company.com"
+8,"Congratulations! You've won a free iPhone!","Claim your prize now, click here for more.",1,"offers@store.com","store.com"
+9,"Team meeting postponed","The team meeting has been rescheduled to next week.",0,"admin@corporate.com","corporate.com"
+10,"Exclusive sale on electronics","Don't miss out on our 70% off electronics sale!",1,"sales@electronics.com","electronics.com"
