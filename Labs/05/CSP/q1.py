@@ -1,44 +1,43 @@
 from ortools.sat.python import cp_model
 
-distances = [10, 20, 15, 30]
-product_frequencies = [5, 3, 2, 8]
-num_products = len(distances)
-slot_capacity = [3, 3, 3, 3]
+distances = [1, 2, 3]
+product_frequencies = [15, 8, 20]
+product_volumes = [2, 1, 3]
+slot_capacities = [3, 3, 3]
+
+num_products = len(product_frequencies)
+num_slots = len(distances)
 
 model = cp_model.CpModel()
 
-products = [model.new_int_var(0, len(distances) - 1, f"product_{i}") for i in range(num_products)]
+product_assignments = [model.NewIntVar(0, num_slots - 1, f"product_{i}") for i in range(num_products)]
 
-# Constrain no. 1
+model.AddAllDifferent(product_assignments)
+
+cost_terms = []
 for i in range(num_products):
-    for j in range(i + 1, num_products):
-        model.Add(products[i] != products[j])
+    distance_var = model.NewIntVar(0, 100, f"distance_for_product_{i}")
+    model.AddElement(product_assignments[i], distances, distance_var)
 
-# Constrain no. 2
-for i in range(num_products):
-    model.Add(products[i] < len(distances))
+    cost = model.NewIntVar(0, 1000, f"cost_{i}")
+    model.AddMultiplicationEquality(cost, [distance_var, product_frequencies[i]])
+    
+    cost_terms.append(cost)
 
-# Constrain no. 3
-total_distance = sum(distances[products[i].Index()] * product_frequencies[i] for i in range(num_products))
-
-model.Minimize(total_distance)
+model.Minimize(sum(cost_terms))
 
 solver = cp_model.CpSolver()
-
 status = solver.Solve(model)
 
-print(f"Solver status: {solver.StatusName(status)}")
-
 if status == cp_model.OPTIMAL or status == cp_model.FEASIBLE:
-    print("Solver found a solution:")
-
-    total_distance = 0
-
+    print("Solution Found:\n")
+    total = 0
     for i in range(num_products):
-        product_slot = solver.Value(products[i])
-        print(f"Product {i} is assigned to slot {product_slot} with distance {distances[product_slot]} and frequency {product_frequencies[i]}")
-        total_distance += distances[product_slot] * product_frequencies[i]
-
-    print(f"Total walking distance: {total_distance}")
+        slot = solver.Value(product_assignments[i])
+        freq = product_frequencies[i]
+        dist = distances[slot]
+        print(f"Product {i} → Slot {slot} | Distance: {dist} | Frequency: {freq}")
+        total += freq * dist
+    print(f"\nTotal walking distance: {total}")
 else:
     print("No solution found.")
