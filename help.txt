@@ -1,0 +1,1108 @@
+#-------------------------------EDA-----------------------------------------------------
+# ============================
+# EXPLORATORY DATA ANALYSIS (EDA) - EXAM PRACTICE
+# Covers: Pandas, NumPy, Matplotlib (must-know exam methods)
+# ============================
+
+# ---------------------------
+# 1. IMPORT LIBRARIES
+# ---------------------------
+import pandas as pd       # For data handling
+import numpy as np        # For numerical operations
+import matplotlib.pyplot as plt  # For plotting
+import seaborn as sns
+
+
+# ---------------------------
+# 2. LOAD DATA
+# ---------------------------
+# When & Why: Use read_csv or read_excel to import datasets into Pandas
+df_csv = pd.read_csv("data.csv")       # read CSV file
+df_excel = pd.read_excel("data.xlsx")  # read Excel file
+
+
+# ---------------------------
+# 3. DATA INSPECTION
+# ---------------------------
+print(df_csv.head())       # first 5 rows → check if data loaded correctly
+print(df_csv.tail())       # last 5 rows → quick glance at end records
+print(df_csv.ndim)         # dimensions → rows vs cols
+print(df_csv.size)         # total no. of elements (rows * cols)
+print(df_csv.info())       # column types, null values, memory usage
+
+
+# ---------------------------
+# 4. DESCRIPTIVE STATISTICS
+# ---------------------------
+print(df_csv.describe())   # summary stats → mean, std, min, max (only for numeric cols)
+print(df_csv.mean(numeric_only=True))   # mean of all numeric cols
+print(df_csv.median(numeric_only=True)) # median
+print(df_csv.mode(numeric_only=True))   # mode
+print(df_csv.sum(numeric_only=True))    # column-wise sum
+
+# Arithmetic with DataFrame (useful in feature engineering)
+print(df_csv.sub(10))  # subtract 10 from all numeric columns
+print(df_csv.mul(2))   # multiply
+print(df_csv.div(2))   # divide
+
+
+# ---------------------------
+# 5. DATA CLEANING
+# ---------------------------
+print(df_csv.empty)           # check if DataFrame is empty
+print(df_csv.isnull().sum())  # check nulls in each column
+
+# Drop columns/rows
+df_drop = df_csv.drop('column_name', axis=1)                # without inplace
+df_csv.drop('column_name', axis=1, inplace=True)            # inplace modifies original
+
+# Get column(s)
+print(df_csv.get('col1'))             # single column
+print(df_csv.get(['col1','col2']))    # multiple columns
+
+# Unique values (Series only, not entire DF)
+print(df_csv['col1'].unique())        # unique values in a column
+print(df_csv['col1'].value_counts())  # count of unique values
+
+
+# ---------------------------
+# 6. INDEXING & FILTERING
+# ---------------------------
+# loc → label-based (row, col by names)
+print(df_csv.loc[5:10 , 'col2':'col5'])              # rows 5-10, cols 2-5
+print(df_csv.loc[5:10 , ['col2','col4','col5']])     # specific cols
+print(df_csv.loc[[5,6,7,10,15,20,21] , 'col2':'col5'])
+
+# iloc → index-based (row/col by numbers)
+print(df_csv.iloc[0:5 , 0:3])        # first 5 rows, first 3 cols
+print(df_csv.iloc[[0,2,4] , [1,3]])  # specific rows & cols
+
+# Filtering rows
+print(df_csv.loc[df_csv['age'] == 48])             # filter rows with age = 48
+print(df_csv.loc[df_csv['weather'] == 'sunny'])    # filter rows with weather = sunny
+
+
+# ---------------------------
+# 7. DATA COMBINATION
+# ---------------------------
+# pop → remove column
+age_col = df_csv.pop('age')    # removes and returns "age" column
+
+# append → add rows of another DataFrame
+d1 = pd.DataFrame({'A':[1,2],'B':[3,4]})
+d2 = pd.DataFrame({'A':[5,6],'B':[7,8]})
+print(d1.append(d2, ignore_index=True))  # append rows, reset index
+
+# concat → join along axis (0=rows, 1=cols)
+print(pd.concat([d1,d2], axis=0))  # row-wise
+print(pd.concat([d1,d2], axis=1))  # col-wise
+
+# merge → combine on common column
+d3 = pd.DataFrame({'id':[1,2,3], 'marks':[90,80,70]})
+d4 = pd.DataFrame({'id':[1,2,4], 'grade':['A','B','C']})
+print(pd.merge(d3,d4,on='id',how='inner'))   # only matching ids
+print(pd.merge(d3,d4,on='id',how='left'))    # all from left
+print(pd.merge(d3,d4,on='id',how='right'))   # all from right
+print(pd.merge(d3,d4,on='id',how='outer'))   # union of ids
+
+
+# ---------------------------
+# 8. DATA VISUALIZATION (MATPLOTLIB)
+# ---------------------------
+x = [1,2,3,4,5]
+y = [10,20,25,30,40]
+
+# Line Plot
+plt.plot(x, y, color='blue', marker='o', ms=8, mec='red', mfc='yellow')  
+# ms = marker size, mec = edge color, mfc = face color
+plt.title("Line Plot Example")
+plt.xlabel("X-axis")
+plt.ylabel("Y-axis")
+plt.legend(["line"])
+plt.show()
+
+# Bar Plot
+plt.bar(x, y, color='green')
+plt.title("Bar Plot")
+plt.show()
+
+# Histogram
+plt.hist(y, bins=5, color='purple')
+plt.title("Histogram")
+plt.show()
+
+# Scatter Plot
+plt.scatter(x, y, color='orange')
+plt.title("Scatter Plot")
+plt.show()
+
+# Subplot Example
+plt.subplot(1,2,1)  # (rows, cols, plot_number)
+plt.plot(x,y,color='blue')
+plt.title("Plot 1")
+
+plt.subplot(1,2,2)
+plt.bar(x,y,color='red')
+plt.title("Plot 2")
+
+plt.suptitle("Subplot Example")
+plt.show()
+
+# ============================
+# 8. DATA VISUALIZATION (MATPLOTLIB)
+# ============================
+import matplotlib.pyplot as plt
+
+# ---------------------------
+# 🔹 Numerical Data
+# ---------------------------
+
+# Histogram → distribution of numeric values
+plt.hist(df_csv['numeric_column'], bins=10, color='skyblue', edgecolor='black')
+# When & Why: To understand frequency distribution & skewness
+plt.title("Histogram")
+plt.xlabel("Values")
+plt.ylabel("Frequency")
+plt.show()
+
+# Line Plot → trends or time-series
+plt.plot(df_csv['num_col1'], df_csv['num_col2'], color='blue', marker='o')
+# When & Why: To show progression over time or sequence (e.g., stock prices, trends)
+plt.title("Line Plot")
+plt.xlabel("num_col1")
+plt.ylabel("num_col2")
+plt.show()
+
+# Scatter Plot → relationship between 2 numerical variables
+plt.scatter(df_csv['num_col1'], df_csv['num_col2'], color='red')
+# When & Why: To detect correlation, clusters, or unusual data patterns
+plt.title("Scatter Plot")
+plt.xlabel("num_col1")
+plt.ylabel("num_col2")
+plt.show()
+
+# Boxplot → spread + outliers
+plt.boxplot(df_csv['numeric_column'])
+# When & Why: To visualize quartiles, median, and detect outliers
+plt.title("Boxplot")
+plt.xlabel("numeric_column")
+plt.ylabel("Value")
+plt.show()
+
+# Subplot → multiple plots side by side
+plt.subplot(1,2,1)  # (rows, cols, index)
+plt.hist(df_csv['numeric_column'], color='green')
+plt.title("Subplot 1")
+plt.xlabel("Values")
+plt.ylabel("Frequency")
+
+plt.subplot(1,2,2)
+plt.scatter(df_csv['num_col1'], df_csv['num_col2'], color='orange')
+plt.title("Subplot 2")
+plt.xlabel("num_col1")
+plt.ylabel("num_col2")
+
+plt.suptitle("Matplotlib Subplots (Numeric)")
+plt.show()
+
+
+# ---------------------------
+# 🔹 Categorical Data
+# ---------------------------
+
+# Bar Plot → category comparison
+plt.bar(df_csv['categorical_column'].unique(),
+        df_csv['categorical_column'].value_counts())
+# When & Why: To compare counts or values across categories
+plt.title("Bar Plot (Categorical)")
+plt.xlabel("Categories")
+plt.ylabel("Count")
+plt.show()
+
+# Pie Chart → proportion of categories
+plt.pie(df_csv['categorical_column'].value_counts(),
+        labels=df_csv['categorical_column'].unique(),
+        autopct='%1.1f%%')
+# When & Why: To show percentage share of each category
+plt.title("Pie Chart")
+plt.show()
+
+# Subplot for categorical data
+plt.subplot(1,2,1)
+plt.bar(df_csv['categorical_column'].unique(),
+        df_csv['categorical_column'].value_counts())
+plt.title("Bar Subplot")
+plt.xlabel("Categories")
+plt.ylabel("Count")
+
+plt.subplot(1,2,2)
+plt.pie(df_csv['categorical_column'].value_counts(),
+        labels=df_csv['categorical_column'].unique(),
+        autopct='%1.1f%%')
+plt.title("Pie Subplot")
+
+plt.suptitle("Matplotlib Subplots (Categorical)")
+plt.show()
+
+# ============================
+# 9. DATA VISUALIZATION (SEABORN)
+# ============================
+import seaborn as sns
+
+# ---------------------------
+# 🔹 Numerical Data
+# ---------------------------
+
+# Histogram / KDE → distribution of numeric values
+sns.histplot(df_csv['numeric_column'], bins=20, kde=True)
+# When & Why: Shows spread, shape, and skewness of numeric data
+plt.title("Histogram + KDE")
+plt.xlabel("Values")
+plt.ylabel("Frequency")
+plt.show()
+
+# Scatter Plot → numeric vs numeric
+sns.scatterplot(x='num_col1', y='num_col2', data=df_csv)
+# When & Why: To visualize correlation and clustering
+plt.title("Scatter Plot")
+plt.xlabel("num_col1")
+plt.ylabel("num_col2")
+plt.show()
+
+# Line Plot → trends
+sns.lineplot(x='num_col1', y='num_col2', data=df_csv)
+# When & Why: Time-series or ordered numeric trends
+plt.title("Line Plot")
+plt.xlabel("num_col1")
+plt.ylabel("num_col2")
+plt.show()
+
+# Boxplot → spread + outliers
+sns.boxplot(x=df_csv['numeric_column'])
+# When & Why: Quartiles + outliers in one view
+plt.title("Boxplot")
+plt.xlabel("numeric_column")
+plt.ylabel("Value")
+plt.show()
+
+# Violin Plot → distribution + density
+sns.violinplot(x=df_csv['numeric_column'])
+# When & Why: Richer alternative to boxplot (shape + spread)
+plt.title("Violin Plot")
+plt.xlabel("numeric_column")
+plt.ylabel("Value")
+plt.show()
+
+# Heatmap → correlation matrix
+sns.heatmap(df_csv.corr(numeric_only=True), annot=True, cmap='coolwarm')
+# When & Why: To check correlation strength between numeric variables
+plt.title("Heatmap (Correlation)")
+plt.show()
+
+# Pairplot → all numeric pairs
+sns.pairplot(df_csv[['num_col1','num_col2','num_col3']])
+# When & Why: Quick overview of all pairwise relationships
+plt.suptitle("Pairplot (Multiple Numeric Relationships)", y=1.02)
+plt.show()
+
+
+# ---------------------------
+# 🔹 Categorical Data
+# ---------------------------
+
+# Bar Plot → category vs numeric summary (mean by default)
+sns.barplot(x='categorical_column', y='numeric_column', data=df_csv)
+# When & Why: Compare averages of numeric variable across categories
+plt.title("Bar Plot")
+plt.xlabel("Category")
+plt.ylabel("Mean of Numeric Column")
+plt.show()
+
+# Count Plot → frequency of categories
+sns.countplot(x='categorical_column', data=df_csv)
+# When & Why: Show category distribution / imbalance
+plt.title("Count Plot")
+plt.xlabel("Category")
+plt.ylabel("Count")
+plt.show()
+
+# Boxplot (Categorical vs Numeric)
+sns.boxplot(x='categorical_column', y='numeric_column', data=df_csv)
+# When & Why: Compare spread + outliers across categories
+plt.title("Boxplot (Cat vs Num)")
+plt.xlabel("Category")
+plt.ylabel("Numeric Value")
+plt.show()
+
+# Violin Plot (Categorical vs Numeric)
+sns.violinplot(x='categorical_column', y='numeric_column', data=df_csv)
+# When & Why: Compare full distributions across categories
+plt.title("Violin Plot (Cat vs Num)")
+plt.xlabel("Category")
+plt.ylabel("Numeric Value")
+plt.show()
+
+# Strip Plot / Swarm Plot → individual category points
+sns.stripplot(x='categorical_column', y='numeric_column', data=df_csv, jitter=True)
+# When & Why: Show all actual data points per category
+plt.title("Strip Plot")
+plt.xlabel("Category")
+plt.ylabel("Numeric Value")
+plt.show()
+
+sns.swarmplot(x='categorical_column', y='numeric_column', data=df_csv)
+# When & Why: Non-overlapping points → better visualization of density
+plt.title("Swarm Plot")
+plt.xlabel("Category")
+plt.ylabel("Numeric Value")
+plt.show()
+
+#---------------------------------Feature Enginnering----------------------------------
+# feature_engineering.py
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, OrdinalEncoder, StandardScaler, MinMaxScaler
+from sklearn.feature_selection import VarianceThreshold, mutual_info_regression
+from sklearn.linear_model import Lasso
+from sklearn.ensemble import RandomForestRegressor
+
+# ================================
+# 1. Load Dataset
+# ================================
+df = pd.read_csv("your_file.csv")
+
+# ================================
+# 2. Handling Missing Values
+# ================================
+# Fill numerical missing values with median
+numerical_cols = df.select_dtypes(include=['number']).columns
+for col in numerical_cols:
+    df[col].fillna(df[col].median(), inplace=True)
+
+# Fill categorical missing values with mode
+categorical_cols = df.select_dtypes(include=['object']).columns
+for col in categorical_cols:
+    df[col].fillna(df[col].mode()[0], inplace=True)
+
+# ================================
+# 3. Handling Outliers
+# ================================
+
+# --- Method 1: Log Transformation (to reduce skewness)
+features = ['LotFrontage', 'MasVnrArea', 'GarageYrBlt']
+df[features] = np.log1p(df[features])  # log(1+x) handles zeros safely
+
+# --- Method 2: IQR Method for Outlier Removal
+def remove_outliers_iqr(data, column):
+    Q1 = data[column].quantile(0.25)   # 25th percentile
+    Q3 = data[column].quantile(0.75)   # 75th percentile
+    IQR = Q3 - Q1
+    lower_bound = Q1 - 1.5 * IQR
+    upper_bound = Q3 + 1.5 * IQR
+    
+    # Keep only values within bounds
+    return data[(data[column] >= lower_bound) & (data[column] <= upper_bound)]
+
+# Example: Apply on LotFrontage
+if "LotFrontage" in df.columns:
+    df = remove_outliers_iqr(df, "LotFrontage")
+
+# Plot boxplots for visual inspection
+df[features].boxplot(figsize=(8, 4))
+plt.title("Box Plot with Outlier Detection (Log + IQR)")
+plt.ylabel("Values")
+plt.xticks(rotation=45)
+plt.show()
+
+# ================================
+# 4. Encoding Categorical Variables
+# ================================
+# Label Encoding (good for trees)
+label_encoder = LabelEncoder()
+for col in categorical_cols:
+    df[col] = label_encoder.fit_transform(df[col])
+
+# One-Hot Encoding
+df_onehot = pd.get_dummies(df, columns=categorical_cols, drop_first=True)
+
+# Ordinal Encoding Example
+education_order = ['Primary', 'Secondary', 'Bachelor', 'Master', 'PhD']
+if 'Education' in df.columns:
+    ordinal_encoder = OrdinalEncoder(categories=[education_order])
+    df['Education'] = ordinal_encoder.fit_transform(df[['Education']])
+
+# Target Encoding
+if 'SalePrice' in df.columns:
+    for col in categorical_cols:
+        order = df.groupby(col)['SalePrice'].mean().sort_values().index
+        order_dict = {val: idx for idx, val in enumerate(order)}
+        df[col] = df[col].map(order_dict)
+
+# ================================
+# 5. Feature Scaling
+# ================================
+scaler_standard = StandardScaler()
+scaler_minmax = MinMaxScaler()
+
+scaled_standard = scaler_standard.fit_transform(df[numerical_cols])
+scaled_minmax = scaler_minmax.fit_transform(df[numerical_cols])
+
+# ================================
+# 6. Creating New Features
+# ================================
+# Convert Year features into Age
+year_cols = [col for col in numerical_cols if "Yr" in col or "Year" in col]
+if "YrSold" in df.columns:
+    for col in year_cols:
+        df[col + "_Age"] = df["YrSold"] - df[col]
+
+# Example: Price per Square Foot
+if {"SalePrice", "GrLivArea"}.issubset(df.columns):
+    df["PricePerSqft"] = df["SalePrice"] / df["GrLivArea"]
+
+# ================================
+# 7. Feature Selection
+# ================================
+# Variance Threshold
+selector = VarianceThreshold(threshold=0.01)
+df_selected = selector.fit_transform(df[numerical_cols])
+
+# Mutual Information
+if "SalePrice" in df.columns:
+    mi = mutual_info_regression(df[numerical_cols].fillna(0), df["SalePrice"])
+    mi_scores = pd.Series(mi, index=numerical_cols).sort_values(ascending=False)
+    print("Mutual Information Scores:\n", mi_scores)
+
+# Model-based Selection (RandomForest)
+if "SalePrice" in df.columns:
+    rf = RandomForestRegressor(random_state=42)
+    rf.fit(df[numerical_cols].fillna(0), df["SalePrice"])
+    importances = pd.Series(rf.feature_importances_, index=numerical_cols).sort_values(ascending=False)
+    print("Feature Importances (RF):\n", importances.head(10))
+
+# ================================
+# Final Dataset Ready
+# ================================
+print("Final shape of data:", df.shape)
+
+#--------------------------------KNN---------------------------------------
+# ======================================
+# 🧩 KNN with All Validation Techniques
+# ======================================
+# ======================================
+# 🧠 K-Nearest Neighbors (KNN) - Full Workflow with Validation & Visualization
+# ======================================
+
+# 1️⃣ Import Libraries
+import pandas as pd
+import numpy as np
+from sklearn.model_selection import train_test_split, KFold, LeaveOneOut, cross_val_score
+from sklearn.preprocessing import StandardScaler
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+import warnings
+warnings.filterwarnings('ignore')
+
+# ======================================
+# 2️⃣ Load Dataset
+# ======================================
+# Replace 'your_file.csv' with your actual dataset
+df = pd.read_csv('your_file.csv')
+
+# Replace 'target' with your actual target column name
+y = df.pop('target')
+X = df
+
+# ======================================
+# 3️⃣ Feature Scaling (Important for KNN)
+# ======================================
+# KNN depends on distance → scale all numeric features to equal range
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X)
+
+# ======================================
+# 4️⃣ Train-Test Split Validation
+# ======================================
+print("\n==============================")
+print("1️⃣ TRAIN-TEST SPLIT VALIDATION")
+print("==============================")
+
+# Split data (70% train, 30% test)
+X_train, X_test, y_train, y_test = train_test_split(
+    X_scaled, y, train_size=0.7, random_state=42
+)
+
+# Choose K using √n heuristic
+n = X_train.shape[0]
+k_value = int(np.sqrt(n))
+if k_value % 2 == 0:
+    k_value += 1
+k_value = max(1, min(k_value, n - 1))
+
+print(f"Chosen K (√n rule) = {k_value}")
+
+# Train & evaluate
+model = KNeighborsClassifier(n_neighbors=k_value)
+model.fit(X_train, y_train)
+y_pred = model.predict(X_test)
+acc_train_test = accuracy_score(y_test, y_pred)
+
+print(f"Train-Test Split Accuracy: {acc_train_test * 100:.2f}%")
+
+# ======================================
+# 5️⃣ Accuracy Experimentation (K = 1 to 30)
+# ======================================
+acc = []  # list to store accuracy for each K
+
+for i in range(1, 31):
+    clf = KNeighborsClassifier(n_neighbors=i)
+    clf.fit(X_train, y_train)
+    pred_i = clf.predict(X_test)
+    accKNN = accuracy_score(y_test, pred_i)
+    acc.append(accKNN)
+
+# Find best K
+best_k = np.argmax(acc) + 1
+best_acc = acc[best_k - 1] * 100
+
+print(f"\nBest K Value from Testing = {best_k}")
+print(f"Best Accuracy = {best_acc:.2f}%")
+
+# ======================================
+# 6️⃣ Visualization - Accuracy vs K
+# ======================================
+plt.figure(figsize=(8, 4))
+plt.plot(range(1, 31), acc, marker='o', linestyle='--', color='b', markersize=6)
+plt.title("Accuracy vs K (Number of Neighbors)")
+plt.xlabel("K Value")
+plt.ylabel("Accuracy")
+plt.xticks(range(1, 31))
+plt.grid(True)
+plt.show()
+
+# ======================================
+# 7️⃣ K-Fold Cross Validation
+# ======================================
+print("\n==============================")
+print("2️⃣ K-FOLD CROSS VALIDATION")
+print("==============================")
+
+kfold = KFold(n_splits=5, shuffle=True, random_state=42)
+model_kfold = KNeighborsClassifier(n_neighbors=k_value)
+cv_scores = cross_val_score(model_kfold, X_scaled, y, cv=kfold)
+
+print(f"K-Fold Accuracies: {cv_scores}")
+print(f"Mean K-Fold Accuracy: {cv_scores.mean() * 100:.2f}%")
+
+# ======================================
+# 8️⃣ Leave-One-Out Cross Validation (LOOCV)
+# ======================================
+print("\n==============================")
+print("3️⃣ LEAVE-ONE-OUT CROSS VALIDATION (LOOCV)")
+print("==============================")
+
+# ⚠️ Use only on small datasets — LOOCV trains n times (very slow!)
+loo = LeaveOneOut()
+model_loo = KNeighborsClassifier(n_neighbors=k_value)
+loo_scores = cross_val_score(model_loo, X_scaled, y, cv=loo)
+
+print(f"LOOCV Mean Accuracy: {loo_scores.mean() * 100:.2f}%")
+
+# ======================================
+# ✅ Summary of All Validation Results
+# ======================================
+print("\n==============================")
+print("✅ VALIDATION SUMMARY")
+print("==============================")
+print(f"Train-Test Split Accuracy: {acc_train_test * 100:.2f}%")
+print(f"K-Fold Mean Accuracy:      {cv_scores.mean() * 100:.2f}%")
+print(f"LOOCV Mean Accuracy:       {loo_scores.mean() * 100:.2f}%")
+
+#---------------KNN from scratch 
+# ================================
+# KNN from scratch — exam-friendly
+# Includes multiple distance functions (Euclidean, Manhattan, Minkowski,
+# Chebyshev, Cosine, Hamming, Chi-squared) and simple predict loop.
+# Scale AFTER train-test split (use StandardScaler).
+# ================================
+
+import pandas as pd
+import numpy as np
+from math import sqrt
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score
+
+# ---- Replace these two lines for your dataset ----
+df = pd.read_csv("your_file.csv")      # your CSV
+X = df.drop("target", axis=1).to_numpy()
+y = df["target"].to_numpy()
+
+# ===== Split BEFORE scaling (avoid leakage) =====
+X_train, X_test, y_train, y_test = train_test_split(X, y, train_size=0.7, random_state=42)
+
+# ===== Scale AFTER split =====
+scaler = StandardScaler()
+X_train = scaler.fit_transform(X_train)
+X_test  = scaler.transform(X_test)
+
+# =========================
+# Distance functions (easy to memorize)
+# =========================
+
+def euclidean_distance(a, b):
+    # sum (a_i - b_i)^2 then sqrt
+    s = 0.0
+    for i in range(len(a)):
+        diff = a[i] - b[i]
+        s += diff * diff
+    return s ** 0.5
+
+def manhattan_distance(a, b):
+    # sum |a_i - b_i|
+    s = 0.0
+    for i in range(len(a)):
+        s += abs(a[i] - b[i])
+    return s
+
+def minkowski_distance(a, b, p=3):
+    # general form: ( sum |a_i - b_i|^p )^(1/p)
+    s = 0.0
+    for i in range(len(a)):
+        s += abs(a[i] - b[i]) ** p
+    return s ** (1.0 / p)
+
+def chebyshev_distance(a, b):
+    # max |a_i - b_i|
+    maxd = 0.0
+    for i in range(len(a)):
+        d = abs(a[i] - b[i])
+        if d > maxd:
+            maxd = d
+    return maxd
+
+def cosine_distance(a, b):
+    # 1 - (a·b) / (||a|| * ||b||)
+    dot = 0.0
+    norm_a = 0.0
+    norm_b = 0.0
+    for i in range(len(a)):
+        dot += a[i] * b[i]
+        norm_a += a[i] * a[i]
+        norm_b += b[i] * b[i]
+    # avoid division by zero
+    if norm_a == 0 or norm_b == 0:
+        return 1.0
+    cos_sim = dot / (sqrt(norm_a) * sqrt(norm_b))
+    return 1.0 - cos_sim
+
+def hamming_distance(a, b):
+    # proportion of mismatched components (good for categorical/binary)
+    mismatches = 0
+    for i in range(len(a)):
+        if a[i] != b[i]:
+            mismatches += 1
+    return mismatches / len(a)
+
+def chi_squared_distance(a, b, eps=1e-10):
+    # sum ( (a_i - b_i)^2 / (a_i + b_i) )
+    # add small eps to denominator to avoid div-by-zero
+    s = 0.0
+    for i in range(len(a)):
+        num = (a[i] - b[i]) ** 2
+        den = (a[i] + b[i]) + eps
+        s += num / den
+    return s
+
+# =========================
+# KNN helpers (no class, simple)
+# =========================
+
+def get_neighbors(train_X, train_y, test_row, k, dist_func=euclidean_distance, **kwargs):
+    """
+    Compute distances from test_row to all train_X rows using dist_func,
+    return labels of k nearest neighbors.
+    """
+    distances = []
+    for idx, train_row in enumerate(train_X):
+        d = dist_func(test_row, train_row, **kwargs)  # compute distance
+        distances.append((idx, d))
+    distances.sort(key=lambda x: x[1])               # sort by distance
+    neighbor_idxs = [distances[i][0] for i in range(k)]
+    neighbor_labels = [train_y[i] for i in neighbor_idxs]
+    return neighbor_labels
+
+def predict_classification(train_X, train_y, test_row, k, dist_func=euclidean_distance, **kwargs):
+    labels = get_neighbors(train_X, train_y, test_row, k, dist_func, **kwargs)
+    # majority vote: choose label with highest count
+    prediction = max(set(labels), key=lambda v: labels.count(v))
+    return prediction
+
+# =========================
+# Choose k (sqrt rule), predict, evaluate
+# =========================
+n = X_train.shape[0]
+k = int(sqrt(n))            # common exam rule: k = floor(sqrt(n))
+if k % 2 == 0:
+    k += 1                  # make odd to avoid ties (binary case)
+k = max(1, min(k, n - 1))   # ensure valid: 1 <= k <= n-1
+print("Chosen k =", k)
+
+# Choose a distance function here (change to try others)
+distance_function = euclidean_distance      # default
+# distance_function = chi_squared_distance
+# distance_function = manhattan_distance
+# distance_function = cosine_distance
+
+# predict for each test row
+preds = []
+for test_row in X_test:
+    p = predict_classification(X_train, y_train, test_row, k, dist_func=distance_function)
+    preds.append(p)
+
+# accuracy
+acc = sum(1 for p, t in zip(preds, y_test) if p == t) / len(y_test)
+print(f"Accuracy (from-scratch KNN) using {distance_function.__name__}: {acc * 100:.2f}%")
+
+# When to use which (quick memory tips):
+# Euclidean: default for continuous numeric features.
+# Mnhattan: when features are on grid or when outliers matter less.
+# Minkowski (p): generalization (p=1 → Manhattan, p=2 → Euclidean).
+# Chebyshev: when only max-difference matters (e.g., moves in chess).
+# Cosine: for text / high-dimensional direction-based similarity (use when magnitude irrelevant).Hamming: categorical / binary vectors (counts mismatches).
+# Chi-squared: frequency/count data (e.g., histograms); sensitive to relative differences.
+
+# ----------------------- Decision Tree Classifier Implementation------------------------
+
+# Step 1: Import libraries
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+import matplotlib.pyplot as plt
+
+# Step 2: Load or Prepare Your Dataset
+# Replace this part with your dataset
+# Example:
+# X = dataset.iloc[:, :-1]   # Features
+# y = dataset.iloc[:, -1]    # Target variable
+
+# Step 3: Split data into train and test sets
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.3, random_state=42
+)
+
+# ======================================
+# 4️⃣ Decision Tree (Default Parameters)
+# ======================================
+dt_default = DecisionTreeClassifier()
+dt_default.fit(X_train, y_train)
+
+# Predictions
+pred_default = dt_default.predict(X_test)
+
+# Accuracy
+print("\n========= Decision Tree (Default) =========")
+print("Training Accuracy:", dt_default.score(X_train, y_train) * 100, "%")
+print("Testing Accuracy :", accuracy_score(y_test, pred_default) * 100, "%")
+
+# ======================================
+# 5️⃣ Decision Tree using Entropy
+# ======================================
+dt_entropy = DecisionTreeClassifier(criterion='entropy')
+dt_entropy.fit(X_train, y_train)
+pred_entropy = dt_entropy.predict(X_test)
+
+print("\n========= Decision Tree (Entropy) =========")
+print("Training Accuracy:", dt_entropy.score(X_train, y_train) * 100, "%")
+print("Testing Accuracy :", accuracy_score(y_test, pred_entropy) * 100, "%")
+
+# ======================================
+# 6️⃣ Decision Tree using Entropy + Pruning
+# ======================================
+dt_pruned = DecisionTreeClassifier(criterion='entropy', ccp_alpha=0.015)
+dt_pruned.fit(X_train, y_train)
+pred_pruned = dt_pruned.predict(X_test)
+
+print("\n========= Decision Tree (Entropy + Pruning) =========")
+print("Training Accuracy:", dt_pruned.score(X_train, y_train) * 100, "%")
+print("Testing Accuracy :", accuracy_score(y_test, pred_pruned) * 100, "%")
+
+# ======================================
+# 7️⃣ Visualization (Matplotlib)
+# ======================================
+plt.figure(figsize=(12, 8))
+plot_tree(
+    dt_pruned,
+    filled=True,
+    rounded=True,
+    fontsize=10
+)
+plt.title("Decision Tree Visualization (Entropy + Pruning)")
+plt.show()
+
+# =============Decision Tree Classifier from Scratch(Using Entropy and Information Gain)===========================================
+
+# 1️⃣ Import Required Libraries
+import pandas as pd
+import math
+
+# ===========================================
+# 2️⃣ Load and Prepare Dataset
+# ===========================================
+# Replace 'data2.csv' with your dataset name
+df = pd.read_csv("data2.csv")
+
+# Drop ID column if it exists (not useful for prediction)
+if 'ID' in df.columns:
+    df = df.drop('ID', axis=1)
+
+print("✅ Dataset Loaded Successfully!\n")
+print(df.head())
+
+# ===========================================
+# 3️⃣ Define Entropy Function
+# ===========================================
+# Entropy measures impurity or randomness
+def entropy(labels):
+    total = len(labels)
+    value_counts = labels.value_counts()
+    ent = 0
+    for count in value_counts:
+        p = count / total                     # probability of each class
+        ent -= p * math.log2(p)               # entropy formula: -Σ p * log2(p)
+    return ent
+
+# ===========================================
+# 4️⃣ Define Information Gain Function
+# ===========================================
+# Information Gain tells how much uncertainty is reduced
+def information_gain(df, attribute, target):
+    total_entropy = entropy(df[target])       # entropy before split
+    values = df[attribute].unique()           # unique values of that attribute
+    weighted_entropy = 0
+
+    # Calculate entropy for each attribute value
+    for val in values:
+        subset = df[df[attribute] == val]
+        weight = len(subset) / len(df)
+        weighted_entropy += weight * entropy(subset[target])  # weighted avg
+
+    gain = total_entropy - weighted_entropy   # IG = total - weighted
+    return gain
+
+# ===========================================
+# 5️⃣ Calculate Information Gain for Each Attribute
+# ===========================================
+target = "CLASS"                              # target column name
+features = df.drop(target, axis=1)
+
+print("\n📊 Information Gain for Each Attribute:")
+ig_results = {}
+
+for attr in features.columns:
+    ig = information_gain(df, attr, target)
+    ig_results[attr] = ig
+    print(f"{attr}: {ig:.4f}")
+
+# ===========================================
+# 6️⃣ Choose Attribute with Highest Information Gain
+# ===========================================
+root_node = max(ig_results, key=ig_results.get)
+print("\n🌟 Root Node Selected Based on Highest Information Gain:", root_node)
+
+# ===========================================
+# 7️⃣ Optional — Split the Dataset on Root Node (First Level Split)
+# ===========================================
+# This step shows how the data would be split by the chosen root node
+for val in df[root_node].unique():
+    subset = df[df[root_node] == val]
+    print(f"\nSubset for {root_node} = {val}:")
+    print(subset)
+
+# ===========================================
+# ✅ Summary
+# ===========================================
+print("\n✅ SUMMARY:")
+print("1. Entropy measures impurity of the dataset.")
+print("2. Information Gain tells which feature best splits the data.")
+print("3. Feature with highest IG becomes the Root Node.")
+print("4. Continue recursively (if required) to build complete tree.")
+
+#------------------ENSEMBLE LEARNING (GENERALIZED VERSION)------------------------------
+
+# Import libraries
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+from sklearn.linear_model import LogisticRegression
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.ensemble import VotingClassifier, BaggingClassifier, RandomForestClassifier, AdaBoostClassifier
+from xgboost import XGBClassifier
+from statistics import mode
+
+# ========================================
+# STEP 1: LOAD AND SPLIT YOUR DATA
+# ========================================
+
+# Load your dataset (use your own CSV file)
+# df = pd.read_csv("data.csv")
+
+# For demonstration, let's assume df is already loaded
+# Example structure:
+# df.head()
+
+# Separate features (X) and target (y)
+# Change "target_column" to your actual target column name
+# X = df.drop("target_column", axis=1)
+# y = df["target_column"]
+
+# Example for testing if you don't have CSV yet
+# (You can remove this part when using your own dataset)
+from sklearn.datasets import load_iris
+iris = load_iris()
+X, y = iris.data, iris.target
+
+# Split data into training and testing sets
+x_train, x_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+
+# ========================================
+# STEP 2: CREATE BASE MODELS
+# ========================================
+
+model1 = LogisticRegression(max_iter=1000, random_state=1)
+model2 = DecisionTreeClassifier(random_state=1)
+model3 = KNeighborsClassifier()
+
+# Train all models
+model1.fit(x_train, y_train)
+model2.fit(x_train, y_train)
+model3.fit(x_train, y_train)
+
+# ========================================
+# STEP 3: SIMPLE ENSEMBLE TECHNIQUES
+# ========================================
+
+print("\n========== SIMPLE ENSEMBLE TECHNIQUES ==========\n")
+
+# --- (a) MAX VOTING (for Classification) ---
+pred1 = model1.predict(x_test)
+pred2 = model2.predict(x_test)
+pred3 = model3.predict(x_test)
+
+# Combine predictions using majority vote (mode)
+final_pred = []
+for i in range(len(x_test)):
+    final_pred.append(mode([pred1[i], pred2[i], pred3[i]]))
+
+print("Max Voting Accuracy:", accuracy_score(y_test, final_pred) * 100)
+
+# --- (b) AVERAGING (for probabilities) ---
+# Works only if models support predict_proba()
+pred1_prob = model1.predict_proba(x_test)
+pred2_prob = model2.predict_proba(x_test)
+pred3_prob = model3.predict_proba(x_test)
+
+# Average predicted probabilities
+avg_pred = (pred1_prob + pred2_prob + pred3_prob) / 3
+avg_final = np.argmax(avg_pred, axis=1)  # Take class with highest probability
+print("Averaging Accuracy:", accuracy_score(y_test, avg_final) * 100)
+
+# ========================================
+# STEP 4: VOTING CLASSIFIER USING SKLEARN
+# ========================================
+
+print("\n========== VOTING CLASSIFIER ==========\n")
+
+# --- (a) HARD VOTING ---
+hard_vote = VotingClassifier(
+    estimators=[('lr', model1), ('dt', model2), ('knn', model3)],
+    voting='hard'
+)
+hard_vote.fit(x_train, y_train)
+print("Hard Voting Accuracy:", hard_vote.score(x_test, y_test) * 100)
+
+# --- (b) SOFT VOTING ---
+soft_vote = VotingClassifier(
+    estimators=[('lr', model1), ('dt', model2), ('knn', model3)],
+    voting='soft'
+)
+soft_vote.fit(x_train, y_train)
+print("Soft Voting Accuracy:", soft_vote.score(x_test, y_test) * 100)
+
+# --- (c) WEIGHTED SOFT VOTING ---
+weighted_vote = VotingClassifier(
+    estimators=[('lr', model1), ('dt', model2), ('knn', model3)],
+    voting='soft',
+    weights=[2, 1, 3]  # give higher weight to stronger models
+)
+weighted_vote.fit(x_train, y_train)
+print("Weighted Voting Accuracy:", weighted_vote.score(x_test, y_test) * 100)
+
+# ========================================
+# STEP 5: BAGGING (Bootstrap Aggregation)
+# ========================================
+
+print("\n========== BAGGING ==========\n")
+
+bag_model = BaggingClassifier(
+    base_estimator=DecisionTreeClassifier(),
+    n_estimators=10,
+    random_state=42
+)
+bag_model.fit(x_train, y_train)
+print("Bagging Accuracy:", bag_model.score(x_test, y_test) * 100)
+
+# ========================================
+# STEP 6: RANDOM FOREST
+# ========================================
+
+print("\n========== RANDOM FOREST ==========\n")
+
+rf_model = RandomForestClassifier(
+    n_estimators=100,  # number of trees
+    random_state=42
+)
+rf_model.fit(x_train, y_train)
+print("Random Forest Accuracy:", rf_model.score(x_test, y_test) * 100)
+
+# ========================================
+# STEP 7: BOOSTING (ADABOOST & XGBOOST)
+# ========================================
+
+print("\n========== BOOSTING ==========\n")
+
+# --- (a) ADABOOST ---
+ada_model = AdaBoostClassifier(
+    base_estimator=DecisionTreeClassifier(max_depth=1),
+    n_estimators=50,
+    learning_rate=1.0,
+    random_state=42
+)
+ada_model.fit(x_train, y_train)
+print("AdaBoost Accuracy:", ada_model.score(x_test, y_test) * 100)
+
+# --- (b) XGBOOST ---
+xgb_model = XGBClassifier(use_label_encoder=False, eval_metric='mlogloss')
+xgb_model.fit(x_train, y_train)
+print("XGBoost Accuracy:", xgb_model.score(x_test, y_test) * 100)
+
+# ========================================
+# STEP 8: SUMMARY
+# ========================================
+
+print("\n========== MODEL PERFORMANCE SUMMARY ==========\n")
+print(f"Max Voting Accuracy:       {accuracy_score(y_test, final_pred) * 100:.2f}%")
+print(f"Averaging Accuracy:        {accuracy_score(y_test, avg_final) * 100:.2f}%")
+print(f"Hard Voting Accuracy:      {hard_vote.score(x_test, y_test) * 100:.2f}%")
+print(f"Soft Voting Accuracy:      {soft_vote.score(x_test, y_test) * 100:.2f}%")
+print(f"Weighted Voting Accuracy:  {weighted_vote.score(x_test, y_test) * 100:.2f}%")
+print(f"Bagging Accuracy:          {bag_model.score(x_test, y_test) * 100:.2f}%")
+print(f"Random Forest Accuracy:    {rf_model.score(x_test, y_test) * 100:.2f}%")
+print(f"AdaBoost Accuracy:         {ada_model.score(x_test, y_test) * 100:.2f}%")
+print(f"XGBoost Accuracy:          {xgb_model.score(x_test, y_test) * 100:.2f}%")
+
